@@ -1,53 +1,45 @@
 import React, { useState, useEffect } from 'react'
 
 function Home({ setPage, setSelectedProductId, onCategorySelect }) {
-  const [recommendedProducts, setRecommendedProducts] = useState([])
+  const [products, setProducts] = useState([])
 
   useEffect(() => {
-    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/products?recommended=true')
+    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/products')
       .then((res) => res.json())
-      .then((data) => setRecommendedProducts(data))
-      .catch((err) => console.error("Error fetching recommended parameters:", err))
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Error fetching homepage structural inventory:", err))
   }, [])
 
+  // Filter helpers to distribute products into their matching layout rows
+  const homeAndOutdoorItems = products.filter(p => p.category === 'Home and outdoor').slice(0, 8)
+  const consumerElectronicsItems = products.filter(p => p.category === 'Consumer electronics').slice(0, 8)
+  const dealsItems = products.slice(0, 5) // Top items displaying deal cuts
+
   return (
-    <div className="space-y-10 text-left antialiased animate-fade-in">
+    <div className="space-y-8 text-left antialiased animate-fade-in pb-12">
       
-      {/* 3-COLUMN HERO GRID BOX PANEL */}
+      {/* 3-COLUMN HERO STRIP */}
       <div className="bg-white border border-[#DEE2E7] rounded-xl p-4 grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[380px] shadow-sm">
-        
-        {/* LEFT COMPONENT: CATEGORIES MENU SIDEBAR */}
+        {/* LEFT: CATEGORIES SIDEBAR */}
         <div className="md:col-span-1 flex flex-col space-y-1 text-sm text-gray-600 font-medium">
           <div className="bg-blue-50 text-[#0D6EFD] font-bold p-2.5 rounded-lg text-xs tracking-tight select-none">
             All Categories Overview
           </div>
-          <button 
-            onClick={() => { onCategorySelect('Apparel'); setPage('products'); }}
-            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
-          >
+          <button onClick={() => { onCategorySelect('Apparel'); setPage('products'); }} className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs">
             Clothes and wear (Apparel)
           </button>
-          <button 
-            onClick={() => { onCategorySelect('Home and outdoor'); setPage('products'); }}
-            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
-          >
+          <button onClick={() => { onCategorySelect('Home and outdoor'); setPage('products'); }} className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs">
             Home interiors (Outdoor)
           </button>
-          <button 
-            onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }}
-            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
-          >
+          <button onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }} className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs">
             Computer and tech
           </button>
-          <button 
-            onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }}
-            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
-          >
+          <button onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }} className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs">
             Consumer Electronics
           </button>
         </div>
 
-        {/* MIDDLE COMPONENT: FEATURED PROMOTION CARD BANNER WITH GRAPHICS */}
+        {/* CENTER: COVER BANNER */}
         <div className="md:col-span-2 bg-[#E3F2FD] rounded-xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden border border-blue-100/40">
           <div className="space-y-4">
             <p className="text-gray-900 font-bold text-base tracking-tight">Latest trending structural layouts</p>
@@ -55,66 +47,94 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
               Electronic items, robust supply chains
             </h1>
           </div>
-          
-          {/* CENTER GRAPHICS ROW INTEGRATION */}
           <div className="flex items-center gap-4 text-5xl my-4 select-none opacity-90">
-            <span>📦</span>
-            <span>🏭</span>
-            <span>💻</span>
+            <span>📦</span><span>🏭</span><span>💻</span>
           </div>
-
-          <button 
-            onClick={() => { onCategorySelect(''); setPage('products'); }}
-            className="bg-[#0D6EFD] text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm w-fit z-10"
-          >
+          <button onClick={() => { onCategorySelect(''); setPage('products'); }} className="bg-[#0D6EFD] text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm w-fit z-10">
             Source now
           </button>
-          
-          <div className="absolute right-4 bottom-4 text-6xl opacity-20 select-none hidden sm:block pointer-events-none">
-            🎧
-          </div>
         </div>
 
-        {/* RIGHT COMPONENT: WELCOME HUB QUICK PANEL */}
+        {/* RIGHT: JOIN CARD */}
         <div className="md:col-span-1 flex flex-col justify-between gap-4">
           <div className="bg-[#E5F1FF] rounded-xl p-4 flex flex-col justify-between h-full border border-blue-100/30 text-xs">
             <div className="flex gap-3 items-center">
               <span className="text-2xl select-none">👤</span>
-              <p className="font-bold text-gray-900 leading-tight">
-                Hi, user, let's get started
-              </p>
+              <p className="font-bold text-gray-900 leading-tight">Hi, user, let's get started</p>
             </div>
-            <button 
-              onClick={() => setPage('products')}
-              className="w-full bg-[#0D6EFD] hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition text-center shadow-sm mt-4"
-            >
+            <button onClick={() => setPage('products')} className="w-full bg-[#0D6EFD] hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition text-center shadow-sm mt-4">
               Join now
             </button>
           </div>
         </div>
-
       </div>
 
-      {/* DYNAMIC RECOMMENDATIONS GRID SECTION */}
-      <div className="space-y-5 text-left">
-        <h3 className="text-xl font-black text-gray-900 tracking-tight">Recommended inventory lines</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-          {recommendedProducts.map((product) => (
+      {/* SECTION 1: DEALS AND OFFERS BLOCK */}
+      <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm grid grid-cols-1 md:grid-cols-5">
+        <div className="p-5 border-b md:border-b-0 md:border-r border-[#DEE2E7] flex flex-col justify-center text-left space-y-1">
+          <h3 className="text-base font-black text-gray-900">Deals and offers</h3>
+          <p className="text-gray-400 text-xs font-semibold">Limited active layout</p>
+        </div>
+        <div className="md:col-span-4 grid grid-cols-2 sm:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-[#DEE2E7]">
+          {dealsItems.map((product) => (
+            <div 
+              key={product.id} 
+              onClick={() => { setSelectedProductId(product.id); setPage('detail'); }}
+              className="p-4 flex flex-col items-center justify-center text-center space-y-2 cursor-pointer hover:bg-gray-50/50 transition group"
+            >
+              <div className="text-4xl select-none group-hover:scale-105 transition duration-200">{product.image}</div>
+              <p className="text-xs font-bold text-gray-800 truncate w-full px-2">{product.name}</p>
+              <span className="bg-[#FFE3E3] text-[#EB5757] text-[10px] font-black px-2 py-0.5 rounded-full">-25%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION 2: HOME AND OUTDOOR DUAL ROW BLOCK */}
+      <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm grid grid-cols-1 md:grid-cols-4">
+        <div className="p-6 bg-[#FBE9E7]/40 flex flex-col justify-between items-start min-h-[160px] md:min-h-0">
+          <h3 className="text-base font-black text-gray-900 max-w-[120px]">Home and outdoor</h3>
+          <button onClick={() => { onCategorySelect('Home and outdoor'); setPage('products'); }} className="bg-white text-gray-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-gray-50 transition border border-gray-200 shadow-sm">
+            Source now
+          </button>
+        </div>
+        <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-4 grid-rows-2 border-t md:border-t-0 md:border-l border-[#DEE2E7] divide-x divide-y divide-[#DEE2E7]">
+          {homeAndOutdoorItems.map((product) => (
             <div 
               key={product.id}
               onClick={() => { setSelectedProductId(product.id); setPage('detail'); }}
-              className="bg-white border border-[#DEE2E7] rounded-xl p-3.5 space-y-3 shadow-sm hover:shadow-md hover:border-gray-300 transition duration-300 group cursor-pointer text-left flex flex-col justify-between"
+              className="p-3 flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50/50 transition text-left group"
             >
-              <div className="bg-gray-50 h-36 rounded-lg flex items-center justify-center text-5xl select-none group-hover:scale-105 transition duration-300 border border-gray-100">
-                {product.image}
+              <div className="space-y-0.5 max-w-[110px]">
+                <h4 className="text-xs font-bold text-gray-900 line-clamp-2 leading-tight">{product.name}</h4>
+                <p className="text-gray-400 text-[10px] font-bold">From USD 19</p>
               </div>
-              <div className="space-y-1">
-                <h4 className="font-bold text-gray-900 text-xs tracking-tight line-clamp-2 min-h-[32px]">{product.name}</h4>
-                <p className="text-[#0D6EFD] font-black text-sm">{product.price}</p>
-                <span className="inline-block bg-gray-100 text-gray-500 font-bold text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
-                  {product.category}
-                </span>
+              <div className="text-3xl select-none group-hover:scale-110 transition duration-200 shrink-0">{product.image}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION 3: CONSUMER ELECTRONICS DUAL ROW BLOCK */}
+      <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm grid grid-cols-1 md:grid-cols-4">
+        <div className="p-6 bg-[#E3F2FD]/40 flex flex-col justify-between items-start min-h-[160px] md:min-h-0">
+          <h3 className="text-base font-black text-gray-900 max-w-[120px]">Consumer electronics</h3>
+          <button onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }} className="bg-white text-gray-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-gray-50 transition border border-gray-200 shadow-sm">
+            Source now
+          </button>
+        </div>
+        <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-4 grid-rows-2 border-t md:border-t-0 md:border-l border-[#DEE2E7] divide-x divide-y divide-[#DEE2E7]">
+          {consumerElectronicsItems.map((product) => (
+            <div 
+              key={product.id}
+              onClick={() => { setSelectedProductId(product.id); setPage('detail'); }}
+              className="p-3 flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50/50 transition text-left group"
+            >
+              <div className="space-y-0.5 max-w-[110px]">
+                <h4 className="text-xs font-bold text-gray-900 line-clamp-2 leading-tight">{product.name}</h4>
+                <p className="text-gray-400 text-[10px] font-bold">From USD 19</p>
               </div>
+              <div className="text-3xl select-none group-hover:scale-110 transition duration-200 shrink-0">{product.image}</div>
             </div>
           ))}
         </div>
