@@ -12,26 +12,82 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
 
   return (
     <div className="space-y-10 text-left antialiased animate-fade-in">
-      {/* HERO BANNER SECTION */}
-      <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row items-center p-6 md:p-10 gap-8 min-h-[380px]">
-        <div className="space-y-4 md:w-1/2">
-          <p className="text-gray-900 font-bold text-base tracking-tight">Latest trending structural layouts</p>
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight tracking-tighter">
-            Electronic items, robust supply chains
-          </h1>
+      
+      {/* ORIGINAL 3-COLUMN HERO GRID BOX PANEL */}
+      <div className="bg-white border border-[#DEE2E7] rounded-xl p-4 grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[380px] shadow-sm">
+        
+        {/* LEFT COMPONENT: CATEGORIES MENU SIDEBAR */}
+        <div className="md:col-span-1 flex flex-col space-y-1 text-sm text-gray-600 font-medium">
+          <div className="bg-blue-50 text-[#0D6EFD] font-bold p-2.5 rounded-lg text-xs tracking-tight select-none">
+            All Categories Overview
+          </div>
           <button 
-            onClick={() => { onCategorySelect(''); setPage('products'); }}
-            className="bg-[#0D6EFD] text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm"
+            onClick={() => { onCategorySelect('Apparel'); setPage('products'); }}
+            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
           >
-            Source now
+            Clothes and wear (Apparel)
+          </button>
+          <button 
+            onClick={() => { onCategorySelect('Home and outdoor'); setPage('products'); }}
+            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
+          >
+            Home interiors (Outdoor)
+          </button>
+          <button 
+            onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }}
+            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
+          >
+            Computer and tech
+          </button>
+          <button 
+            onClick={() => { onCategorySelect('Consumer electronics'); setPage('products'); }}
+            className="p-2.5 rounded-lg hover:bg-gray-50 text-left transition text-xs hover:text-gray-900"
+          >
+            Consumer Electronics
           </button>
         </div>
-        <div className="md:w-1/2 flex items-center justify-center text-7xl select-none animate-bounce duration-1000">
-          📦🏭💻
+
+        {/* MIDDLE COMPONENT: FEATURED PROMOTION CARD BANNER */}
+        <div className="md:col-span-2 bg-[#E3F2FD] rounded-xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden border border-blue-100/40">
+          <div className="space-y-2.5 max-w-[220px] md:max-w-xs z-10">
+            <p className="text-[#0D6EFD] font-black uppercase text-[10px] tracking-widest">Latest Trending</p>
+            <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight tracking-tight">
+              Electronic items
+            </h1>
+          </div>
+          <button 
+            onClick={() => { onCategorySelect(''); setPage('products'); }}
+            className="bg-white text-gray-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm border border-gray-200/50 w-fit mt-6 z-10"
+          >
+            Source Now
+          </button>
+          {/* DECORATIVE BACKGROUND INLINE GLYPH MODULES */}
+          <div className="absolute right-4 bottom-4 text-6xl opacity-80 select-none hidden sm:block pointer-events-none">
+            🎧
+          </div>
         </div>
+
+        {/* RIGHT COMPONENT: WELCOME HUB QUICK PANEL */}
+        <div className="md:col-span-1 flex flex-col justify-between gap-4">
+          <div className="bg-[#E5F1FF] rounded-xl p-4 flex flex-col justify-between h-full border border-blue-100/30 text-xs">
+            <div className="flex gap-3 items-center">
+              <span className="text-2xl select-none">👤</span>
+              <p className="font-bold text-gray-900 leading-tight">
+                Hi, user, let's get started
+              </p>
+            </div>
+            <button 
+              onClick={() => setPage('products')}
+              className="w-full bg-[#0D6EFD] hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition text-center shadow-sm mt-4"
+            >
+              Join now
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      {/* DYNAMIC RECOMMENDATIONS SECTION GRID MAP */}
+      {/* DYNAMIC RECOMMENDATIONS GRID SECTION */}
       <div className="space-y-5 text-left">
         <h3 className="text-xl font-black text-gray-900 tracking-tight">Recommended inventory lines</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
@@ -55,6 +111,7 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
           ))}
         </div>
       </div>
+
     </div>
   )
 }
