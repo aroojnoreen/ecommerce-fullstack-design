@@ -21,7 +21,7 @@ function App() {
   const [authSuccess, setAuthSuccess] = useState('')
 
   const refreshCartCount = () => {
-    fetch('http://127.0.0.1:5000/api/cart')
+    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/cart')
       .then((res) => res.json())
       .then((data) => {
         const totalItems = data.reduce((sum, item) => sum + item.quantity, 0)
@@ -46,7 +46,7 @@ function App() {
     
     const endpoint = isRegisterMode ? 'register' : 'login'
     
-    fetch(`http://127.0.0.1:5000/api/auth/${endpoint}`, {
+    fetch(`https://ecommerce-fullstack-design-tv00.onrender.com/api/auth/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: authForm.username, password: authForm.password })
@@ -74,7 +74,7 @@ function App() {
         }
       })
       .catch((err) => {
-        print("Auth submit connection failure details:", err)
+        console.error("Auth submit connection failure details:", err)
         setAuthError("Cannot connect to authorization database server.")
       })
   }
@@ -132,7 +132,7 @@ function App() {
           <AdminPanel setPage={setCurrentPage} />
         )}
 
-        {/* === GLOBAL EXTRA SERVICES SECTION (PERMANENTLY VISIBLE) === */}
+        {/* === GLOBAL EXTRA SERVICES SECTION === */}
         <div className="space-y-5 pt-8 border-t border-gray-200/60 text-left">
           <h3 className="text-xl font-black text-gray-900 tracking-tight">Our extra services</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -251,7 +251,6 @@ function App() {
         </div>
       )}
 
-      {/* === COMPREHENSIVE MULTI-COLUMN INTERACTIVE FOOTER MATRIX === */}
       <footer className="bg-white border-t border-[#DEE2E7] pt-12 pb-6 text-xs text-gray-500 font-medium text-left">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-6 gap-8 pb-10 border-b border-gray-100">
           <div className="col-span-2 space-y-4">

@@ -7,13 +7,12 @@ function AdminPanel({ setPage }) {
   const [statusMsg, setStatusMsg] = useState('')
 
   const fetchInventory = () => {
-    fetch('http://127.0.0.1:5000/api/products?recommended=true')
+    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/products?recommended=true')
       .then(res => res.json())
       .then(recs => {
-        fetch('http://127.0.0.1:5000/api/products')
+        fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/products')
           .then(res => res.json())
           .then(normals => {
-            // Filter uniques by ID
             const combined = [...recs, ...normals]
             const uniqueMap = {}
             combined.forEach(item => { uniqueMap[item.id] = item })
@@ -30,8 +29,8 @@ function AdminPanel({ setPage }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     const url = isEditing 
-      ? `http://127.0.0.1:5000/api/admin/products/${formData.id}`
-      : 'http://127.0.0.1:5000/api/admin/products'
+      ? `https://ecommerce-fullstack-design-tv00.onrender.com/api/admin/products/${formData.id}`
+      : 'https://ecommerce-fullstack-design-tv00.onrender.com/api/admin/products'
     const method = isEditing ? 'PUT' : 'POST'
 
     fetch(url, {
@@ -53,7 +52,7 @@ function AdminPanel({ setPage }) {
 
   const handleDelete = (id) => {
     if (!window.confirm("Are you sure you want to permanently strip this product from the database catalog?")) return
-    fetch(`http://127.0.0.1:5000/api/admin/products/${id}`, { method: 'DELETE' })
+    fetch(`https://ecommerce-fullstack-design-tv00.onrender.com/api/admin/products/${id}`, { method: 'DELETE' })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -84,7 +83,6 @@ function AdminPanel({ setPage }) {
       {statusMsg && <p className="p-3 bg-blue-50 text-blue-700 font-bold text-xs rounded-lg animate-pulse shadow-sm">{statusMsg}</p>}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* LEFT: ADD / EDIT FORM CONTAINER */}
         <form onSubmit={handleSubmit} className="bg-white border border-[#DEE2E7] rounded-xl p-5 space-y-4 shadow-sm text-xs font-semibold">
           <h3 className="text-sm font-black text-gray-900 border-b pb-2">{isEditing ? "Modify Specifications" : "Launch New Product"}</h3>
           <div>
@@ -119,9 +117,8 @@ function AdminPanel({ setPage }) {
           )}
         </form>
 
-        {/* RIGHT: LIVE PRODUCT ROWS TABLE */}
         <div className="lg:col-span-2 space-y-3 max-h-[520px] overflow-y-auto pr-1">
-          <h3 className="text-sm font-black text-gray-900 pl-1">Live Database Inventory Inventory</h3>
+          <h3 className="text-sm font-black text-gray-900 pl-1">Live Database Inventory</h3>
           {products.map(p => (
             <div key={p.id} className="bg-white border border-[#DEE2E7] rounded-xl p-3.5 flex justify-between items-center text-xs gap-4 shadow-sm hover:border-gray-300 transition">
               <div className="flex items-center gap-3 min-w-0">
