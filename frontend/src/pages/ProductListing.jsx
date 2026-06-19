@@ -2,95 +2,63 @@ import React, { useState, useEffect } from 'react'
 
 function ProductListing({ setPage, setSelectedProductId, categoryFilter, setCategoryFilter }) {
   const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  // Determine if we are processing a keyword search query or a category filter
-  const isSearch = categoryFilter.startsWith('search:')
-  const displayTitle = isSearch 
-    ? `Search Results for "${categoryFilter.replace('search:', '')}"`
-    : (categoryFilter ? `${categoryFilter} Collection` : 'All Available Catalog Stocks')
 
   useEffect(() => {
-    setLoading(true)
-    
-    let url = 'http://127.0.0.1:5000/api/products'
+    let url = 'https://ecommerce-fullstack-design-tv00.onrender.com/api/products'
     if (categoryFilter) {
-      if (isSearch) {
-        const queryText = categoryFilter.replace('search:', '')
-        url += `?search=${encodeURIComponent(queryText)}`
-      } else {
-        url += `?category=${encodeURIComponent(categoryFilter)}`
-      }
+      url += `?category=${encodeURIComponent(categoryFilter)}`
     }
 
     fetch(url)
       .then((res) => res.json())
-      .then((data) => {
-        setProducts(data)
-        setLoading(false)
-      })
-      .catch((err) => {
-        console.error("Error loading filtered products:", err)
-        setLoading(false)
-      })
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Error connecting structural data arrays:", err))
   }, [categoryFilter])
 
-  const handleItemSelect = (id) => {
-    setSelectedProductId(id)
-    setPage('detail')
-  }
-
-  if (loading) {
-    return <p className="text-left text-gray-500 text-sm p-8">Searching database records...</p>
-  }
-
   return (
-    <div className="space-y-6 text-left antialiased">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 text-left antialiased animate-fade-in">
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-gray-200/60 pb-4">
         <div>
-          <h2 className="text-xl font-black text-gray-900">{displayTitle}</h2>
-          <p className="text-xs font-semibold text-gray-400">Showing {products.length} matching entries</p>
+          <h2 className="text-2xl font-black text-gray-900 tracking-tight">Catalog Inventory</h2>
+          <p className="text-xs text-gray-400 font-semibold">Explore trending wholesale manufacturing streams</p>
         </div>
+        
         {categoryFilter && (
           <button 
-            onClick={() => setCategoryFilter('')} 
-            className="text-xs bg-gray-100 border border-gray-200 hover:bg-gray-200 text-gray-600 font-bold px-3 py-1.5 rounded-md transition"
+            onClick={() => setCategoryFilter('')}
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[11px] px-3 py-1.5 rounded-lg border w-fit shadow-sm"
           >
-            Clear Search Filter
+            Clear Filter Matrix: <span className="text-gray-900 font-black ml-0.5">"{categoryFilter}" ×</span>
           </button>
         )}
       </div>
 
-      {/* PRODUCTS DISPLAY LIST */}
-      <div className="space-y-4">
-        {products.map((item) => (
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+        {products.map((product) => (
           <div 
-            key={item.id}
-            onClick={() => handleItemSelect(item.id)}
-            className="bg-white border border-[#DEE2E7] rounded-xl p-5 flex flex-col sm:flex-row gap-5 items-center hover:shadow-md transition cursor-pointer"
+            key={product.id}
+            onClick={() => { setSelectedProductId(product.id); setPage('detail'); }}
+            className="bg-white border border-[#DEE2E7] rounded-xl p-3.5 space-y-3 shadow-sm hover:shadow-md hover:border-gray-300 transition duration-300 group cursor-pointer text-left flex flex-col justify-between"
           >
-            <div className="bg-gray-50 h-32 w-32 rounded-lg flex items-center justify-center text-5xl border border-gray-100 shrink-0 select-none">
-              {item.image}
+            <div className="bg-gray-50 h-36 rounded-lg flex items-center justify-center text-5xl select-none group-hover:scale-105 transition duration-300 border border-gray-100">
+              {product.image}
             </div>
-            <div className="flex-grow space-y-2 w-full">
-              <div className="flex justify-between items-start gap-4">
-                <h3 className="font-bold text-gray-900 text-base hover:text-[#0D6EFD] transition">{item.name}</h3>
-                <span className="font-black text-gray-900 text-lg shrink-0">{item.price}</span>
-              </div>
-              <div className="text-xs font-semibold text-orange-500 flex items-center gap-2">
-                ★ {item.rating} <span className="text-gray-400 font-medium">· {item.orders} · <span className="text-green-600 font-bold">{item.shipping}</span></span>
-              </div>
-              <p className="text-gray-500 text-xs font-medium line-clamp-2 leading-relaxed">{item.description}</p>
+            <div className="space-y-1">
+              <h4 className="font-bold text-gray-900 text-xs tracking-tight line-clamp-2 min-h-[32px]">{product.name}</h4>
+              <p className="text-[#0D6EFD] font-black text-sm">{product.price}</p>
+              <span className="inline-block bg-gray-100 text-gray-500 font-bold text-[9px] px-2 py-0.5 rounded uppercase tracking-wider">
+                {product.category}
+              </span>
             </div>
           </div>
         ))}
-
-        {products.length === 0 && (
-          <div className="bg-white border border-[#DEE2E7] rounded-xl p-12 text-center text-gray-400 font-semibold shadow-sm">
-            No live catalog entries matching your search query were found.
-          </div>
-        )}
       </div>
+
+      {products.length === 0 && (
+        <div className="bg-white border border-[#DEE2E7] rounded-xl p-16 text-center text-gray-400 font-semibold shadow-sm w-full">
+          No catalog files index matching the query structure.
+        </div>
+      )}
     </div>
   )
 }
