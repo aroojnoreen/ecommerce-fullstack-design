@@ -10,9 +10,15 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
       .catch((err) => console.error("Error fetching homepage structural inventory:", err))
   }, [])
 
-  // Filter helpers to distribute products into their matching layout rows
-  const homeAndOutdoorItems = products.filter(p => p.category === 'Home and outdoor').slice(0, 8)
-  const consumerElectronicsItems = products.filter(p => p.category === 'Consumer electronics').slice(0, 8)
+  // Case-insensitive filters to safely grab products regardless of database capitalization variants
+  const homeAndOutdoorItems = products.filter(p => 
+    p.category && p.category.toLowerCase().includes('home')
+  ).slice(0, 8)
+
+  const consumerElectronicsItems = products.filter(p => 
+    p.category && p.category.toLowerCase().includes('electronic')
+  ).slice(0, 8)
+
   const dealsItems = products.slice(0, 5) // Top items displaying deal cuts
 
   return (
