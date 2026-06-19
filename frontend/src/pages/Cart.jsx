@@ -5,7 +5,7 @@ function Cart({ setPage, refreshCartCount }) {
   const [loading, setLoading] = useState(true)
 
   const loadCartData = () => {
-    fetch('http://127.0.0.1:5000/api/cart')
+    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/cart')
       .then((res) => res.json())
       .then((data) => {
         setCartItems(data)
@@ -22,7 +22,7 @@ function Cart({ setPage, refreshCartCount }) {
   }, [])
 
   const handleDeleteItem = (itemId) => {
-    fetch(`http://127.0.0.1:5000/api/cart/${itemId}`, {
+    fetch(`https://ecommerce-fullstack-design-tv00.onrender.com/api/cart/${itemId}`, {
       method: 'DELETE'
     })
       .then((res) => res.json())
