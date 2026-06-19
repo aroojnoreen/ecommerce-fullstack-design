@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
-import Home from './pages/Home'
+import Home from './pages/home'
 import ProductListing from './pages/ProductListing'
 import ProductDetail from './pages/ProductDetail'
 import Cart from './pages/Cart'
