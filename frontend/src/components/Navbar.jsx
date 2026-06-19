@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-function Navbar({ setPage, currentPage, onCategorySelect, onSignInClick, currentUser, onLogout }) {
+function Navbar({ setPage, currentPage, onCategorySelect, onSignInClick, currentUser, onLogout, onSearchSubmit }) {
+  const [searchQuery, setSearchQuery] = useState('')
   
   const categories = [
     "Consumer electronics",
@@ -8,6 +9,18 @@ function Navbar({ setPage, currentPage, onCategorySelect, onSignInClick, current
     "Apparel",
     "Sports & Entertainment"
   ]
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value)
+  }
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault()
+    if (onSearchSubmit) {
+      onSearchSubmit(searchQuery)
+      setPage('products')
+    }
+  }
 
   return (
     <header className="bg-white border-b border-[#DEE2E7] sticky top-0 z-40 w-full antialiased text-left">
@@ -22,9 +35,33 @@ function Navbar({ setPage, currentPage, onCategorySelect, onSignInClick, current
           MALL
         </div>
 
+        {/* RESTORED SEARCH BAR MODULE */}
+        <form onSubmit={handleFormSubmit} className="flex-grow max-w-xl mx-4 hidden sm:flex border-2 border-[#0D6EFD] rounded-lg overflow-hidden">
+          <input 
+            type="text" 
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder="Search products, categories..." 
+            className="w-full px-3 py-1.5 text-xs font-semibold focus:outline-none"
+          />
+          <button type="submit" className="bg-[#0D6EFD] text-white font-bold text-xs px-5 hover:bg-blue-700 transition">
+            Search
+          </button>
+        </form>
+
         {/* RIGHT SIDE ACTIONS CONTAINER */}
         <div className="flex items-center space-x-6 shrink-0 text-xs font-semibold text-gray-500">
           
+          {/* ADMIN PORTAL PANEL TOGGLE ELEMENT */}
+          {currentUser === 'admin' && (
+            <button 
+              onClick={() => setPage('admin')}
+              className={`font-bold uppercase tracking-wider px-2.5 py-1.5 rounded-md transition ${currentPage === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            >
+              ⚙️ Admin Panel
+            </button>
+          )}
+
           {/* USER AUTH CONDITIONAL DISPATCHER */}
           {currentUser ? (
             <div className="flex items-center space-x-3 border-r border-gray-200 pr-4 py-1">
