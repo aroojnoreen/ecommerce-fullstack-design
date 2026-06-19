@@ -13,7 +13,7 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
   return (
     <div className="space-y-10 text-left antialiased animate-fade-in">
       
-      {/* ORIGINAL 3-COLUMN HERO GRID BOX PANEL */}
+      {/* 3-COLUMN HERO GRID BOX PANEL */}
       <div className="bg-white border border-[#DEE2E7] rounded-xl p-4 grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[380px] shadow-sm">
         
         {/* LEFT COMPONENT: CATEGORIES MENU SIDEBAR */}
@@ -47,22 +47,30 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
           </button>
         </div>
 
-        {/* MIDDLE COMPONENT: FEATURED PROMOTION CARD BANNER */}
+        {/* MIDDLE COMPONENT: FEATURED PROMOTION CARD BANNER WITH GRAPHICS */}
         <div className="md:col-span-2 bg-[#E3F2FD] rounded-xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden border border-blue-100/40">
-          <div className="space-y-2.5 max-w-[220px] md:max-w-xs z-10">
-            <p className="text-[#0D6EFD] font-black uppercase text-[10px] tracking-widest">Latest Trending</p>
-            <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight tracking-tight">
-              Electronic items
+          <div className="space-y-4">
+            <p className="text-gray-900 font-bold text-base tracking-tight">Latest trending structural layouts</p>
+            <h1 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight tracking-tight max-w-[280px]">
+              Electronic items, robust supply chains
             </h1>
           </div>
+          
+          {/* CENTER GRAPHICS ROW INTEGRATION */}
+          <div className="flex items-center gap-4 text-5xl my-4 select-none opacity-90">
+            <span>📦</span>
+            <span>🏭</span>
+            <span>💻</span>
+          </div>
+
           <button 
             onClick={() => { onCategorySelect(''); setPage('products'); }}
-            className="bg-white text-gray-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm border border-gray-200/50 w-fit mt-6 z-10"
+            className="bg-[#0D6EFD] text-white font-bold text-xs px-5 py-2.5 rounded-lg hover:bg-blue-700 transition shadow-sm w-fit z-10"
           >
-            Source Now
+            Source now
           </button>
-          {/* DECORATIVE BACKGROUND INLINE GLYPH MODULES */}
-          <div className="absolute right-4 bottom-4 text-6xl opacity-80 select-none hidden sm:block pointer-events-none">
+          
+          <div className="absolute right-4 bottom-4 text-6xl opacity-20 select-none hidden sm:block pointer-events-none">
             🎧
           </div>
         </div>
