@@ -42,8 +42,11 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
   const consumerElectronicsItems = dynamicElectronics.length >= 4 ? dynamicElectronics.slice(0, 8) : fallbackElectronics
   const dealsItems = products.length >= 5 ? products.slice(0, 5) : fallbackElectronics.slice(0, 5)
 
+  // Use all products for the recommended list fallback if explicit recommendations aren't flagged
+  const recommendedItems = products.length >= 5 ? products.slice(0, 10) : [...fallbackElectronics, ...fallbackHome].slice(0, 10)
+
   return (
-    <div className="space-y-8 text-left antialiased animate-fade-in pb-12">
+    <div className="space-y-10 text-left antialiased animate-fade-in pb-12">
       
       {/* 3-COLUMN HERO STRIP */}
       <div className="bg-white border border-[#DEE2E7] rounded-xl p-4 grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[380px] shadow-sm">
@@ -164,6 +167,78 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
               <div className="text-3xl select-none group-hover:scale-110 transition duration-200 shrink-0">{product.image}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* RESTORED SECTION 4: RECOMMENDED ITEMS GRID */}
+      <div className="space-y-4 text-left">
+        <h3 className="text-lg font-black text-gray-900 tracking-tight">Recommended items</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          {recommendedItems.map((product) => (
+            <div 
+              key={product.id}
+              onClick={() => { setSelectedProductId(product.id); setPage('detail'); }}
+              className="bg-white border border-[#DEE2E7] rounded-xl p-3 space-y-2 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between"
+            >
+              <div className="bg-gray-50 h-32 rounded-lg flex items-center justify-center text-4xl select-none border border-gray-100">
+                {product.image}
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-gray-900 font-bold text-xs tracking-tight truncate">{product.price || '$19.00'}</p>
+                <h4 className="text-gray-500 font-medium text-[11px] line-clamp-2 leading-tight min-h-[28px]">{product.name}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* RESTORED SECTION 5: EXTRA SERVICES GRID */}
+      <div className="space-y-4 text-left">
+        <h3 className="text-lg font-black text-gray-900 tracking-tight">Our extra services</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition relative group">
+            <div className="h-28 bg-gray-900/10 flex items-center justify-center text-4xl relative overflow-hidden bg-gradient-to-br from-blue-50 to-gray-100">
+              🏭
+              <div className="absolute right-3 bottom-3 bg-[#D1E7DD] p-2 rounded-full border border-white text-base shadow-sm">🔎</div>
+            </div>
+            <div className="p-4 space-y-1 bg-white relative">
+              <h4 className="font-bold text-xs text-gray-900">Source from Industries</h4>
+              <p className="text-gray-400 text-[11px] font-medium leading-normal">Connect directly with certified global manufacturing partners.</p>
+            </div>
+          </div>
+
+          <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition relative group">
+            <div className="h-28 bg-gray-900/10 flex items-center justify-center text-4xl relative overflow-hidden bg-gradient-to-br from-blue-50 to-gray-100">
+              📦
+              <div className="absolute right-3 bottom-3 bg-[#E2E3E5] p-2 rounded-full border border-white text-base shadow-sm">✨</div>
+            </div>
+            <div className="p-4 space-y-1 bg-white relative">
+              <h4 className="font-bold text-xs text-gray-900">Customized Inspection</h4>
+              <p className="text-gray-400 text-[11px] font-medium leading-normal">Ensure multi-tier product safety auditing and validation cycles.</p>
+            </div>
+          </div>
+
+          <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition relative group">
+            <div className="h-28 bg-gray-900/10 flex items-center justify-center text-4xl relative overflow-hidden bg-gradient-to-br from-blue-50 to-gray-100">
+              ✈️
+              <div className="absolute right-3 bottom-3 bg-[#FFF3CD] p-2 rounded-full border border-white text-base shadow-sm">🚀</div>
+            </div>
+            <div className="p-4 space-y-1 bg-white relative">
+              <h4 className="font-bold text-xs text-gray-900">Fast Air & Ocean Freight</h4>
+              <p className="text-gray-400 text-[11px] font-medium leading-normal">Optimize international logistics supply lanes with dynamic tracking.</p>
+            </div>
+          </div>
+
+          <div className="bg-white border border-[#DEE2E7] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition relative group">
+            <div className="h-28 bg-gray-900/10 flex items-center justify-center text-4xl relative overflow-hidden bg-gradient-to-br from-blue-50 to-gray-100">
+              🛡️
+              <div className="absolute right-3 bottom-3 bg-[#CFF4FC] p-2 rounded-full border border-white text-base shadow-sm">🔒</div>
+            </div>
+            <div className="p-4 space-y-1 bg-white relative">
+              <h4 className="font-bold text-xs text-gray-900">Payment Security</h4>
+              <p className="text-gray-400 text-[11px] font-medium leading-normal">Protect transactions with escrow fraud defense structures.</p>
+            </div>
+          </div>
         </div>
       </div>
 
