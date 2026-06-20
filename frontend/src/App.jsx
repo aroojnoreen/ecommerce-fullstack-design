@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Home from './pages/home'
 import ProductListing from './pages/ProductListing'
@@ -16,14 +16,25 @@ function App() {
   const [showAuth, setShowAuth] = useState(false)
 
   const handleCategorySelect = (category) => {
-    setCategoryFilter(category)
-    setSearchQuery('')
-    setPage('products')
+    // Standardize category tracking matches for backend collections
+    let cleanCategory = category
+    if (category.toLowerCase().includes('apparel') || category.toLowerCase().includes('clothes')) {
+      cleanCategory = 'Apparel'
+    } else if (category.toLowerCase().includes('home') || category.toLowerCase().includes('outdoor')) {
+      cleanCategory = 'Home and outdoor'
+    } else if (category.toLowerCase().includes('electronic') || category.toLowerCase().includes('tech')) {
+      cleanCategory = 'Consumer electronics'
+    }
+
+    setCategoryFilter(cleanCategory)
+    setSearchQuery('') 
+    setPage('products') // Force route explicitly to product catalog grid view
   }
 
   const handleSearchSubmit = (query) => {
     setSearchQuery(query)
-    setCategoryFilter('')
+    setCategoryFilter('') 
+    setPage('products') // Force route explicitly to product catalog grid view
   }
 
   const handleLoginSuccess = (user) => {
