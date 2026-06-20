@@ -4,119 +4,108 @@ function Cart({ setPage, refreshCartCount }) {
   const [cartItems, setCartItems] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const loadCartData = () => {
-    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/cart')
-      .then((res) => res.json())
-      .then((data) => {
-        setCartItems(data)
-        setLoading(false)
-      })
-      .catch((err) => {
-        console.error("Error fetching basket lists:", err)
-        setLoading(false)
-      })
-  }
-
+  // 1. Read directly from persistent memory on load
   useEffect(() => {
-    loadCartData()
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || []
+    setCartItems(savedCart)
+    setLoading(false)
   }, [])
 
-  const handleDeleteItem = (itemId) => {
-    fetch(`https://ecommerce-fullstack-design-tv00.onrender.com/api/cart/${itemId}`, {
+  // 2. BULLETPROOF REMOVAL LOGIC (Wipes the ghost items permanently)
+  const handleRemoveItem = (idToDelete) => {
+    // Filter out the item from current active state view
+    const updatedCart = cartItems.filter(item => item.id !== idToDelete)
+    setCartItems(updatedCart)
+
+    // FORCE rewrite browser storage so it doesn't reappear on refresh
+    localStorage.setItem('cart', JSON.stringify(updatedCart))
+
+    // Sync network state up to your backend API cluster
+    fetch(`https://ecommerce-fullstack-design-tv00.onrender.com/api/cart/${idToDelete}`, {
       method: 'DELETE'
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          loadCartData()      // Update localized row list layout array matrix
-          refreshCartCount()  // Sync global navbar counter item bubbles
-        }
-      })
+    .catch((err) => console.warn("API sync dropped, local device cleared safely:", err))
+
+    // Instantly notify Navbar to update the red circle count digit badge
+    if (typeof refreshCartCount === 'function') {
+      refreshCartCount()
+    }
   }
 
-  // Helper method parsing raw monetary string lists to computer floats numbers
   const calculateTotal = () => {
-    return cartItems.reduce((sum, item) => {
-      const numericPrice = parseFloat(item.price.replace('$', '').replace(',', '')) || 0
-      return sum + (numericPrice * item.quantity)
+    return cartItems.reduce((acc, item) => {
+      const itemPrice = typeof item.price === 'string' 
+        ? parseFloat(item.price.replace(/[^0-9.]/g, '')) 
+        : (item.price || 0)
+      return acc + (itemPrice * (item.quantity || 1))
     }, 0).toFixed(2)
   }
 
   if (loading) {
-    return <p className="text-left text-gray-500 text-sm p-8">Loading your active cart items...</p>
+    return <div className="text-center py-12 text-xs font-bold text-gray-400">Syncing procurement registry...</div>
   }
 
   return (
-    <div className="space-y-6 text-left antialiased">
-      <h2 className="text-xl font-black text-gray-900">My Shopping Cart ({cartItems.length})</h2>
+    <div className="max-w-5xl mx-auto space-y-6 text-left antialiased animate-fade-in">
+      <div>
+        <h2 className="text-xl font-black text-gray-900 tracking-tight">Your Shopping Cart</h2>
+        <p className="text-xs text-gray-400 font-semibold mt-0.5">Manage your active wholesale logistics orders</p>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* Left Side: Active items row elements */}
-        <div className="lg:col-span-2 space-y-4">
-          {cartItems.map((item) => (
-            <div 
-              key={item.id}
-              className="bg-white border border-[#DEE2E7] rounded-xl p-4 flex flex-col sm:flex-row gap-4 items-center"
-            >
-              <div className="bg-gray-50 h-20 w-20 rounded-lg flex items-center justify-center text-3xl select-none border border-gray-100 shrink-0">
-                {item.image}
-              </div>
-              
-              <div className="flex-grow text-sm space-y-1 w-full">
-                <h4 className="font-bold text-gray-900">{item.name}</h4>
-                <p className="text-gray-400 text-xs font-semibold">Quantity lines: {item.quantity}</p>
-                <button 
-                  onClick={() => handleDeleteItem(item.id)}
-                  className="text-xs font-bold text-red-500 hover:underline pt-1"
-                >
-                  Remove Item
-                </button>
-              </div>
-
-              <div className="text-right shrink-0 font-black text-gray-900 text-base">
-                {item.price}
-              </div>
-            </div>
-          ))}
-
-          {cartItems.length === 0 && (
-            <div className="bg-white border border-[#DEE2E7] rounded-xl p-12 text-center text-gray-400 font-semibold shadow-sm">
-              Your shopping cart is empty. Click "MALL" to look for products.
-            </div>
-          )}
-        </div>
-
-        {/* Right Side: Total payment pricing calculator layout block summary widget */}
-        <div className="bg-white border border-[#DEE2E7] rounded-xl p-6 space-y-4 shadow-sm">
-          <h3 className="font-black text-gray-900 text-base">Payment Summary</h3>
-          <hr className="border-gray-100" />
-          
-          <div className="space-y-2 text-xs font-semibold text-gray-500">
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span className="text-gray-800">${calculateTotal()}</span>
-            </div>
-            <div className="flex justify-between text-green-600">
-              <span>Shipping Fee:</span>
-              <span>FREE</span>
-            </div>
-          </div>
-          
-          <hr className="border-gray-100" />
-          
-          <div className="flex justify-between items-center font-black text-gray-900 text-base">
-            <span>Total Payment:</span>
-            <span className="text-[#0D6EFD]">${calculateTotal()}</span>
-          </div>
-
-          <button 
-            disabled={cartItems.length === 0}
-            className="w-full bg-[#0D6EFD] text-white font-bold py-2.5 rounded-lg text-xs hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed shadow-sm mt-2"
-          >
-            Proceed to Payment Checkout
+      {cartItems.length === 0 ? (
+        <div className="bg-white border border-[#DEE2E7] rounded-xl p-16 text-center shadow-sm">
+          <span className="text-5xl select-none block mb-3">🛒</span>
+          <p className="text-gray-400 font-bold text-xs">Your procurement manifest is currently empty.</p>
+          <button onClick={() => setPage('home')} className="mt-4 bg-[#0D6EFD] hover:bg-blue-700 text-white font-bold text-xs px-5 py-2.5 rounded-lg transition shadow-sm">
+            Explore Products Catalog
           </button>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          
+          {/* LEFT: LIST OF ITEMS */}
+          <div className="lg:col-span-2 bg-white border border-[#DEE2E7] rounded-xl p-5 shadow-sm divide-y divide-gray-100">
+            {cartItems.map((item) => (
+              <div key={item.id} className="py-4 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-4">
+                  <div className="bg-gray-50 border border-gray-100 w-16 h-16 rounded-lg flex items-center justify-center text-3xl select-none shrink-0">
+                    {item.image || '📦'}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-gray-900 line-clamp-1">{item.name}</h4>
+                    <p className="text-[10px] text-gray-400 font-semibold mt-0.5">Qty: {item.quantity || 1}</p>
+                  </div>
+                </div>
+                
+                <div className="text-right space-y-1 shrink-0">
+                  <p className="font-black text-xs text-gray-900">
+                    {typeof item.price === 'number' ? `$${item.price.toFixed(2)}` : item.price}
+                  </p>
+                  <button 
+                    onClick={() => handleRemoveItem(item.id)}
+                    className="text-[#EB5757] font-black text-[10px] uppercase tracking-wider block ml-auto hover:underline"
+                  >
+                    Remove Item
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* RIGHT: ORDER SUMMARY */}
+          <div className="lg:col-span-1 bg-white border border-[#DEE2E7] rounded-xl p-5 shadow-sm space-y-4">
+            <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">Manifest Valuation</h3>
+            <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
+              <span className="text-xs text-gray-500 font-bold">Total Aggregate Price:</span>
+              <span className="text-base font-black text-[#0D6EFD]">${calculateTotal()}</span>
+            </div>
+            <button className="w-full bg-[#22C55E] hover:bg-green-600 text-white font-bold py-2.5 rounded-lg text-xs transition shadow-sm tracking-wide">
+              Proceed to Secure Checkout
+            </button>
+          </div>
+
+        </div>
+      )}
     </div>
   )
 }
