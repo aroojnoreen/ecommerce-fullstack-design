@@ -1,72 +1,95 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import Navbar from './components/Navbar'
+import Home from './pages/home'
+import ProductListing from './pages/ProductListing'
+import ProductDetail from './pages/ProductDetail'
+import Cart from './pages/Cart'
+import AdminPanel from './pages/AdminPanel' // <-- Points to pages
+import AuthModal from './components/AuthModal'
 
-function AdminPanel() {
-  const [formData, setFormData] = useState({
-    name: '', price: '', image: '📦', description: '', category: 'Consumer electronics', stock: 10
-  })
-  const [statusMsg, setStatusMsg] = useState('')
+function App() {
+  const [page, setPage] = useState('home')
+  const [selectedProductId, setSelectedProductId] = useState(null)
+  const [categoryFilter, setCategoryFilter] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentUser, setCurrentUser] = useState(null)
+  const [showAuth, setShowAuth] = useState(false)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setStatusMsg('Saving administrative product record...')
-    
-    fetch('https://ecommerce-fullstack-design-tv00.onrender.com/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.id || data.success) {
-          setStatusMsg('✨ Item pushed live to database successfully!')
-          setFormData({ name: '', price: '', image: '📦', description: '', category: 'Consumer electronics', stock: 10 })
-        } else {
-          setStatusMsg('Error injecting entry line matrix profiles.')
-        }
-      })
-      .catch(() => setStatusMsg('Database payload push failure.'))
+  const handleCategorySelect = (category) => {
+    let cleanCategory = category
+    if (category.toLowerCase().includes('apparel') || category.toLowerCase().includes('clothes')) {
+      cleanCategory = 'Apparel'
+    } else if (category.toLowerCase().includes('home') || category.toLowerCase().includes('outdoor')) {
+      cleanCategory = 'Home and outdoor'
+    } else if (category.toLowerCase().includes('electronic') || category.toLowerCase().includes('tech')) {
+      cleanCategory = 'Consumer electronics'
+    }
+
+    setCategoryFilter(cleanCategory)
+    setSearchQuery('') 
+    setPage('products')
+  }
+
+  const handleSearchSubmit = (query) => {
+    setSearchQuery(query)
+    setCategoryFilter('') 
+    setPage('products')
+  }
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user)
+  }
+
+  const handleLogout = () => {
+    setCurrentUser(null)
+    setPage('home')
   }
 
   return (
-    <div className="max-w-xl mx-auto bg-white border border-[#DEE2E7] rounded-xl p-6 text-left antialiased my-6 shadow-sm">
-      <h2 className="text-xl font-black text-gray-900 mb-2">⚙️ Production Catalog Administration Panel</h2>
-      <p className="text-xs text-gray-400 font-semibold mb-6">Create and register dynamic backend product collection items</p>
-      
-      <form onSubmit={handleSubmit} className="space-y-4 text-xs font-bold text-gray-700">
-        <div>
-          <label className="block mb-1">Product Title Name:</label>
-          <input type="text" required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full border p-2.5 rounded-lg focus:outline-none font-medium" placeholder="e.g., Wireless Gaming Keyboard" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">Price String Value:</label>
-            <input type="text" required value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} className="w-full border p-2.5 rounded-lg focus:outline-none font-medium" placeholder="e.g., $49.99" />
-          </div>
-          <div>
-            <label className="block mb-1">Emoji Icon Representation:</label>
-            <input type="text" required value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} className="w-full border p-2.5 rounded-lg text-center text-lg focus:outline-none" />
-          </div>
-        </div>
-        <div>
-          <label className="block mb-1">Core Structural Category Line:</label>
-          <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full border p-2.5 rounded-lg bg-white focus:outline-none">
-            <option value="Consumer electronics">Consumer electronics</option>
-            <option value="Home and outdoor">Home and outdoor</option>
-            <option value="Apparel">Apparel</option>
-            <option value="Sports & Entertainment">Sports & Entertainment</option>
-          </select>
-        </div>
-        <div>
-          <label className="block mb-1">Specification Profile Details Description:</label>
-          <textarea rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full border p-2.5 rounded-lg focus:outline-none font-medium text-gray-600" placeholder="Enter wholesale manufacturing item properties..." />
-        </div>
-        <button type="submit" className="w-full bg-purple-600 text-white font-black py-3 rounded-lg hover:bg-purple-700 transition shadow-sm tracking-wide">
-          Push Product Record to Database
-        </button>
-        {statusMsg && <p className="text-center bg-gray-50 p-2 border rounded font-bold text-gray-600 mt-2">{statusMsg}</p>}
-      </form>
+    <div className="min-h-screen bg-[#F7F8FA] font-sans antialiased flex flex-col justify-between">
+      <Navbar 
+        setPage={setPage} 
+        currentPage={page}
+        onCategorySelect={handleCategorySelect}
+        onSignInClick={() => setShowAuth(true)}
+        currentUser={currentUser}
+        onLogout={handleLogout}
+        onSearchSubmit={handleSearchSubmit}
+      />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        {page === 'home' && (
+          <Home setPage={setPage} setSelectedProductId={setSelectedProductId} onCategorySelect={handleCategorySelect} />
+        )}
+        {page === 'products' && (
+          <ProductListing 
+            setPage={setPage} 
+            setSelectedProductId={setSelectedProductId} 
+            categoryFilter={categoryFilter}
+            setCategoryFilter={setCategoryFilter}
+            searchQuery={searchQuery}
+          />
+        )}
+        {page === 'detail' && (
+          <ProductDetail setPage={setPage} productId={selectedProductId} refreshCartCount={() => {}} />
+        )}
+        {page === 'cart' && (
+          <Cart setPage={setPage} refreshCartCount={() => {}} />
+        )}
+        {page === 'admin' && currentUser === 'admin' && (
+          <AdminPanel />
+        )}
+      </main>
+
+      <footer className="bg-white border-t border-[#DEE2E7] py-6 text-center text-xs text-gray-400 font-semibold w-full">
+        © 2026 MALL Wholesale Procurement Networks. All structural rights reserved.
+      </footer>
+
+      {showAuth && (
+        <AuthModal onClose={() => setShowAuth(false)} onLoginSuccess={handleLoginSuccess} />
+      )}
     </div>
   )
 }
 
-export default AdminPanel
+export default App
