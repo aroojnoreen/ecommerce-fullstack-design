@@ -18,26 +18,30 @@ function ProductListing({ setPage, setSelectedProductId, categoryFilter, setCate
       })
   }, [])
 
-  // ADVANCED MULTI-AXIS FILTER ENGINE (Fixes both search bar keywords and category buttons)
+  // RELAXED MATCH ENGINE: Fixes empty grids for both search queries and top category selections
   const filteredProducts = products.filter(product => {
-    // 1. Structural Category Match Condition
+    const productName = product.name ? product.name.toLowerCase() : ''
+    const productDesc = product.description ? product.description.toLowerCase() : ''
+    const productCat = product.category ? product.category.toLowerCase() : ''
+
+    // 1. Category Tab Filtering (Handles "Consumer electronics" -> "electronics" mapping)
     let matchesCategory = true
     if (categoryFilter) {
-      const productCat = product.category ? product.category.toLowerCase() : ''
-      const targetCat = categoryFilter.toLowerCase()
+      const targetCat = categoryFilter.toLowerCase().trim()
       
-      // Smart substring check: matches "Home and outdoor" even if db field just says "home"
-      matchesCategory = productCat.includes(targetCat) || targetCat.includes(productCat)
+      // Smart substring check: matches even if database says "electronics" and tab says "Consumer electronics"
+      matchesCategory = productCat.includes(targetCat) || 
+                        targetCat.includes(productCat) ||
+                        (targetCat.includes('electronics') && productCat.includes('electronic')) ||
+                        (targetCat.includes('home') && productCat.includes('home')) ||
+                        (targetCat.includes('apparel') && productCat.includes('apparel')) ||
+                        (targetCat.includes('sports') && productCat.includes('sport'))
     }
 
-    // 2. Search Query Matrix Match Condition
+    // 2. Search Bar Keyword Filtering
     let matchesSearch = true
     if (searchQuery) {
       const cleanQuery = searchQuery.toLowerCase().trim()
-      const productName = product.name ? product.name.toLowerCase() : ''
-      const productDesc = product.description ? product.description.toLowerCase() : ''
-      const productCat = product.category ? product.category.toLowerCase() : ''
-
       matchesSearch = productName.includes(cleanQuery) || 
                       productDesc.includes(cleanQuery) || 
                       productCat.includes(cleanQuery)
@@ -60,7 +64,7 @@ function ProductListing({ setPage, setSelectedProductId, categoryFilter, setCate
           <p className="text-xs text-gray-400 font-semibold mt-0.5">Explore trending wholesale manufacturing streams</p>
         </div>
         
-        {/* CLEAR FILTERS CHIP CONTAINER */}
+        {/* CLEAR FILTERS CHIP BUTTON */}
         {(categoryFilter || searchQuery) && (
           <button 
             onClick={() => { setCategoryFilter('') }}
