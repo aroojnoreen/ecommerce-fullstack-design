@@ -10,16 +10,37 @@ function Home({ setPage, setSelectedProductId, onCategorySelect }) {
       .catch((err) => console.error("Error fetching homepage structural inventory:", err))
   }, [])
 
-  // Case-insensitive filters to safely grab products regardless of database capitalization variants
-  const homeAndOutdoorItems = products.filter(p => 
-    p.category && p.category.toLowerCase().includes('home')
-  ).slice(0, 8)
+  // 1. Bulletproof static fallbacks so rows are NEVER empty if database positions shift or lag
+  const fallbackHome = [
+    { id: 'h1', name: 'Soft chairs for living room', price: 'From USD 19', image: '🪑' },
+    { id: 'h2', name: 'Sofa & luxurious chair set', price: 'From USD 19', image: '🛋️' },
+    { id: 'h3', name: 'Kitchen dishes dining set', price: 'From USD 19', image: '🍽️' },
+    { id: 'h4', name: 'Smart kitchen mixer setup', price: 'From USD 19', image: '🥣' },
+    { id: 'h5', name: 'High-speed blenders', price: 'From USD 19', image: '🥤' },
+    { id: 'h6', name: 'Home appliances & baskets', price: 'From USD 19', image: '🧺' },
+    { id: 'h7', name: 'Coffee maker machine', price: 'From USD 19', image: '☕' },
+    { id: 'h8', name: 'Clay pottery decoration', price: 'From USD 19', image: '⚱️' }
+  ]
 
-  const consumerElectronicsItems = products.filter(p => 
-    p.category && p.category.toLowerCase().includes('electronic')
-  ).slice(0, 8)
+  const fallbackElectronics = [
+    { id: 'e1', name: 'High-Performance Media Tablet 10.5 Inch', price: 'From USD 19', image: '📱' },
+    { id: 'e2', name: 'Gaming set ultimate bundle', price: 'From USD 19', image: '🎮' },
+    { id: 'e3', name: 'Laptops & Personal Computers', price: 'From USD 19', image: '💻' },
+    { id: 'e4', name: 'Smartphones flagship models', price: 'From USD 19', image: '📞' },
+    { id: 'e5', name: 'Electric kettle hot tea water', price: 'From USD 19', image: '🫖' },
+    { id: 'e6', name: 'Headset for gaming with mic', price: 'From USD 19', image: '🎧' },
+    { id: 'e7', name: 'Canon Camera EOS 200D Professional', price: 'From USD 19', image: '📷' },
+    { id: 'e8', name: 'GoPro HERO8 4K Action Camera', price: 'From USD 19', image: '📹' }
+  ]
 
-  const dealsItems = products.slice(0, 5) // Top items displaying deal cuts
+  // 2. Filter data coming from the live API (case-insensitive)
+  const dynamicHome = products.filter(p => p.category && p.category.toLowerCase().includes('home'))
+  const dynamicElectronics = products.filter(p => p.category && p.category.toLowerCase().includes('electronic'))
+  
+  // 3. Fallback Protection Layer logic
+  const homeAndOutdoorItems = dynamicHome.length >= 4 ? dynamicHome.slice(0, 8) : fallbackHome
+  const consumerElectronicsItems = dynamicElectronics.length >= 4 ? dynamicElectronics.slice(0, 8) : fallbackElectronics
+  const dealsItems = products.length >= 5 ? products.slice(0, 5) : fallbackElectronics.slice(0, 5)
 
   return (
     <div className="space-y-8 text-left antialiased animate-fade-in pb-12">
